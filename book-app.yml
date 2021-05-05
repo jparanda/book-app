@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=book-db
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=juan.aranda.galvis@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=12345
+      - PGADMIN_LISTEN_PORT=92
+    ports:
+      - "9292:92"
+    depends_on:
+      - postgresdb
+  app:
+    build: .
+    container_name: book-app
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/book-db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=12345
+    depends_on:
+      - postgresdb
